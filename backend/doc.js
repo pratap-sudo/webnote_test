@@ -6,12 +6,16 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const filesToInclude = [
+  "server.js",
   "models/User.js",
   "middleware/authMiddleware.js",
-   "controllers/userController.js",
-  
+  "controllers/userController.js",
+  "config/db.js",
+  "config/supabase.js",
   "package.json",
-  "routes/userRoutes"
+  "routes/userRoutes",
+  ".env"
+
 ];
 
 let output = "";
