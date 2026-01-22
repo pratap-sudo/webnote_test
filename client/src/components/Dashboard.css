@@ -1,0 +1,105 @@
+/* Dashboard.css */
+/* Dashboard.css */
+
+.dashboard-container {
+  max-width: 800px;
+  margin: 40px auto;
+  padding: 30px;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  font-family: 'Segoe UI', sans-serif;
+}
+
+h2 {
+  margin-bottom: 20px;
+  color: #333;
+}
+
+input[type="file"] {
+  margin-top: 10px;
+  padding: 8px;
+}
+
+.buttons {
+  margin-top: 15px;
+}
+
+button {
+  margin-right: 10px;
+  padding: 10px 18px;
+  background-color: #4a90e2;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #357abd;
+}
+
+.files-section {
+  margin-top: 30px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 20px;
+}
+
+.file-item {
+  background: #f5f5f5;
+  padding: 12px;
+  border-radius: 10px;
+  text-align: center;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.file-item:hover {
+  transform: scale(1.02);
+}
+
+.file-item img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 6px;
+}
+
+.file-link {
+  font-size: 40px;
+  text-decoration: none;
+}
+
+.file-name {
+  font-size: 14px;
+  font-weight: 500;
+  margin-top: 8px;
+  color: #333;
+  word-break: break-word;
+  max-width: 100%;
+}
+
+.delete-btn {
+  background-color: #ff4d4f;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  font-size: 13px;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 8px;
+  transition: background-color 0.3s ease;
+}
+
+.delete-btn:hover {
+  background-color: #e04345;
+}
+
+.file-item.selected {
+  background-color: #e0f0ff;
+}
