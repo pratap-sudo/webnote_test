@@ -2,6 +2,8 @@
 const express = require('express');
 const dotenv = require('dotenv');
 const cors = require('cors');
+const fs = require('fs');
+const path = require('path');
 const connectDB = require('./config/db');
 const userRoutes = require('./routes/userRoutes');
 const adminRoutes = require('./routes/adminRoutes');
@@ -13,6 +15,9 @@ app.use(cors());
 app.use(express.json());
 connectDB();
 
+const convertedDir = path.join(__dirname, 'converted');
+fs.mkdirSync(convertedDir, { recursive: true });
+app.use('/converted', express.static(convertedDir));
 
 
 app.use('/api', userRoutes);

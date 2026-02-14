@@ -7,7 +7,7 @@ import Navbar from './Navbar';
 
 function Register() {
   const navigate = useNavigate();
-  const [formData, setFormData] = useState({ name: '', email: '', password: '' });
+  const [formData, setFormData] = useState({ name: '', email: '', password: '', channelHandle: '' });
   const [message, setMessage] = useState('');
 
   const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -46,6 +46,12 @@ function Register() {
               type="password"
               name="password"
               placeholder="Password"
+              onChange={handleChange}
+              className="register-input"
+            />
+            <input
+              name="channelHandle"
+              placeholder="Channel Handle (optional, e.g. pratap)"
               onChange={handleChange}
               className="register-input"
             />

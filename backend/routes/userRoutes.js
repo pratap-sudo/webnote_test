@@ -8,8 +8,14 @@ const {
   registerUser,
   loginUser,
   getUserFiles,
+  getPublicFiles,
+  getPublicChannels,
+  getChannelPublicFiles,
+  updateChannelHandle,
+  updateChannelLogo,
   uploadFile,
-  deleteFile
+  deleteFile,
+  convertFile
 } = require('../controllers/userController');
 
 const protect = require('../middleware/authMiddleware');
@@ -30,8 +36,14 @@ const upload = multer({
 router.post('/register', registerUser);
 router.post('/login', loginUser);
 router.get('/account', protect, getUserFiles);
+router.get('/public-data', getPublicFiles);
+router.get('/channels', getPublicChannels);
+router.get('/channels/:channelRef', getChannelPublicFiles);
+router.patch('/channel-handle', protect, updateChannelHandle);
+router.patch('/channel-logo', protect, upload.single('logo'), updateChannelLogo);
 router.post('/upload', protect, upload.single('file'), uploadFile);
 router.post('/delete', protect, deleteFile);
+router.post('/convert', protect, upload.single('file'), convertFile);
 
 
 module.exports = router;
