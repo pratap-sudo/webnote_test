@@ -3,6 +3,7 @@ import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
 import './Dashboard.css';
 import Navbar from './Navbar';
+import { API_BASE_URL } from '../config/api';
 
 function normalizeFile(file) {
   if (!file) return null;
@@ -40,7 +41,7 @@ function Dashboard() {
 
   const fetchFiles = async () => {
     const token = localStorage.getItem('token');
-    const res = await axios.get('https://androidwebnote.onrender.com/api/account', {
+    const res = await axios.get(`${API_BASE_URL}/api/account`, {
       headers: { Authorization: `Bearer ${token}` },
     });
 
@@ -83,7 +84,7 @@ function Dashboard() {
     formData.append('description', description.trim());
     formData.append('category', category);
 
-    await axios.post('https://androidwebnote.onrender.com/api/upload', formData, {
+    await axios.post(`${API_BASE_URL}/api/upload`, formData, {
       headers: { Authorization: `Bearer ${token}` },
     });
 
@@ -106,7 +107,7 @@ function Dashboard() {
     setConvertedFileName('');
 
     try {
-      const res = await axios.post('https://androidwebnote.onrender.com/api/convert', formData, {
+      const res = await axios.post(`${API_BASE_URL}/api/convert`, formData, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setConvertedFileUrl(res.data?.convertedFile?.url || '');
@@ -124,7 +125,7 @@ function Dashboard() {
 
     try {
       await axios.post(
-        'https://androidwebnote.onrender.com/api/delete',
+        `${API_BASE_URL}/api/delete`,
         { fileUrl },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -138,7 +139,7 @@ function Dashboard() {
     const token = localStorage.getItem('token');
     try {
       const res = await axios.patch(
-        'https://androidwebnote.onrender.com/api/channel-handle',
+        `${API_BASE_URL}/api/channel-handle`,
         { channelHandle: channelHandleInput },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -157,7 +158,7 @@ function Dashboard() {
     formData.append('logo', channelLogoFile);
 
     try {
-      const res = await axios.patch('https://androidwebnote.onrender.com/api/channel-logo', formData, {
+      const res = await axios.patch(`${API_BASE_URL}/api/channel-logo`, formData, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setMyChannel(res.data.channel || null);

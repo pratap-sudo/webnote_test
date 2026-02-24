@@ -3,6 +3,7 @@ import axios from 'axios';
 import { Link } from 'react-router-dom';
 import Navbar from './Navbar';
 import './PublicData.css';
+import { API_BASE_URL } from '../config/api';
 
 function Channels() {
   const [channels, setChannels] = useState([]);
@@ -12,7 +13,7 @@ function Channels() {
   useEffect(() => {
     const fetchChannels = async () => {
       try {
-        const res = await axios.get('https://androidwebnote.onrender.com/api/channels');
+        const res = await axios.get(`${API_BASE_URL}/api/channels`);
         setChannels(res.data.channels || []);
       } catch (err) {
         setChannels([]);

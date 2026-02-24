@@ -3,6 +3,7 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import './AdminLogin.css';
 import Navbar from './Navbar';
+import { API_BASE_URL } from '../config/api';
 
 function AdminLogin() {
   const navigate = useNavigate();
@@ -17,7 +18,7 @@ function AdminLogin() {
     e.preventDefault();
     setLoading(true);
     try {
-      const res = await axios.post('https://androidwebnote.onrender.com/api/admin/login', formData);
+      const res = await axios.post(`${API_BASE_URL}/api/admin/login`, formData);
       localStorage.setItem('adminToken', res.data.token);
       navigate('/admin-dashboard');
     } catch (err) {

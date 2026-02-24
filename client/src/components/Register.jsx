@@ -4,6 +4,7 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import './Register.css'; // ✅ Import external CSS
 import Navbar from './Navbar';
+import { API_BASE_URL } from '../config/api';
 
 function Register() {
   const navigate = useNavigate();
@@ -15,7 +16,7 @@ function Register() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('https://androidwebnote.onrender.com/api/register', formData);
+      await axios.post(`${API_BASE_URL}/api/register`, formData);
       navigate('/login');
     } catch (err) {
       setMessage(err.response.data.message);
@@ -65,3 +66,4 @@ function Register() {
 }
 
 export default Register;
+

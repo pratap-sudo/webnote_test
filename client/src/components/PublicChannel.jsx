@@ -3,6 +3,7 @@ import axios from 'axios';
 import { Link, useParams } from 'react-router-dom';
 import Navbar from './Navbar';
 import './PublicData.css';
+import { API_BASE_URL } from '../config/api';
 
 function getFileType(fileUrl) {
   const extension = fileUrl.split('.').pop().toLowerCase();
@@ -36,7 +37,7 @@ function PublicChannel() {
   useEffect(() => {
     const fetchChannel = async () => {
       try {
-        const res = await axios.get(`https://androidwebnote.onrender.com/api/channels/${encodeURIComponent(channelRef || '')}`);
+        const res = await axios.get(`${API_BASE_URL}/api/channels/${encodeURIComponent(channelRef || '')}`);
         setChannel(res.data.channel || null);
         setFiles(res.data.files || []);
       } catch (err) {

@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import './Login.css';
 import Navbar from './Navbar';
 import { useAuth } from '../context/AuthContext';
+import { API_BASE_URL } from '../config/api';
 
 
 function Login() {
@@ -18,12 +19,12 @@ function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post('https://androidwebnote.onrender.com/api/login', formData);
+      const res = await axios.post(`${API_BASE_URL}/api/login`, formData);
       // update auth context so app re-renders immediately
       login(res.data.token);
       navigate('/dashboard');
     } catch (err) {
-      setMessage(err.response.data.message);
+      setMessage(err?.response?.data?.message || 'Login failed. Please try again.');
     }
   };
 

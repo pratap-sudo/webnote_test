@@ -3,6 +3,7 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import './AdminDashboard.css';
 import Navbar from './Navbar';
+import { API_BASE_URL } from '../config/api';
 
 function AdminDashboard() {
   const [stats, setStats] = useState({
@@ -18,7 +19,7 @@ function AdminDashboard() {
   const fetchStats = async () => {
     const token = localStorage.getItem('adminToken');
     try {
-      const res = await axios.get('https://androidwebnote.onrender.com/api/admin/stats', {
+      const res = await axios.get(`${API_BASE_URL}/api/admin/stats`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setStats(res.data);
@@ -34,7 +35,7 @@ function AdminDashboard() {
 
     const token = localStorage.getItem('adminToken');
     try {
-      await axios.delete(`https://androidwebnote.onrender.com/api/admin/users/${userId}`, {
+      await axios.delete(`${API_BASE_URL}/api/admin/users/${userId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       alert('User deleted successfully');
@@ -48,7 +49,7 @@ function AdminDashboard() {
     const token = localStorage.getItem('adminToken');
     try {
       await axios.patch(
-        `https://androidwebnote.onrender.com/api/admin/users/${userId}/toggle-admin`,
+        `${API_BASE_URL}/api/admin/users/${userId}/toggle-admin`,
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       );
