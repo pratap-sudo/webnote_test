@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">WebNote</string>
+    <string name="title_activity_main">WebNote</string>
+    <string name="package_name">com.webnote.app</string>
+    <string name="custom_url_scheme">com.webnote.app</string>
+</resources>
