@@ -17,6 +17,13 @@ function getFilename(fileUrl) {
   return decodeURIComponent(filename);
 }
 
+function getDurationLabel(fileUrl) {
+  const extension = fileUrl.split('.').pop().toLowerCase();
+  const videoExts = ['mp4', 'mkv', 'webm', 'mov', 'avi', 'mpeg', 'mpg'];
+  const audioExts = ['mp3', 'wav', 'aac', 'ogg', 'm4a'];
+  return (videoExts.includes(extension) || audioExts.includes(extension)) ? '00:00' : 'N/A';
+}
+
 function PublicData() {
   const [files, setFiles] = useState([]);
   const [channels, setChannels] = useState([]);
@@ -130,6 +137,7 @@ function PublicData() {
             {filteredFiles.map((item, index) => {
               const fileType = getFileType(item.url);
               const filename = getFilename(item.url);
+              const durationLabel = getDurationLabel(item.url);
 
               return (
                 <div className="public-card" key={`${item.url}-${index}`}>
@@ -139,12 +147,13 @@ function PublicData() {
                     ) : (
                       <span className="public-file-label">{fileType.toUpperCase()}</span>
                     )}
+                    <span className="duration-badge">{durationLabel}</span>
                   </div>
                   <div className="public-info">
                     <div className="public-text">
                       <p className="public-name" title={filename}>{filename}</p>
                       {(item.ownerChannelUrl || item.ownerId) && (
-                        <Link className="public-owner-link" to={item.ownerChannelUrl || `/channel/${item.ownerId}`}>
+                        <Link className="public-owner-link public-owner-line" to={item.ownerChannelUrl || `/channel/${item.ownerId}`}>
                           {item.ownerLogoUrl ? (
                             <img className="channel-avatar small" src={item.ownerLogoUrl} alt={item.ownerName || 'Owner'} />
                           ) : (

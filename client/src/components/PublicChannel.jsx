@@ -17,6 +17,13 @@ function getFilename(fileUrl) {
   return decodeURIComponent(filename);
 }
 
+function getDurationLabel(fileUrl) {
+  const extension = fileUrl.split('.').pop().toLowerCase();
+  const videoExts = ['mp4', 'mkv', 'webm', 'mov', 'avi', 'mpeg', 'mpg'];
+  const audioExts = ['mp3', 'wav', 'aac', 'ogg', 'm4a'];
+  return (videoExts.includes(extension) || audioExts.includes(extension)) ? '00:00' : 'N/A';
+}
+
 function PublicChannel() {
   const { channelRef } = useParams();
   const [channel, setChannel] = useState(null);
@@ -107,6 +114,7 @@ function PublicChannel() {
             {filteredFiles.map((item, index) => {
               const fileType = getFileType(item.url);
               const filename = getFilename(item.url);
+              const durationLabel = getDurationLabel(item.url);
 
               return (
                 <div className="public-card" key={`${item.url}-${index}`}>
@@ -116,10 +124,21 @@ function PublicChannel() {
                     ) : (
                       <span className="public-file-label">{fileType.toUpperCase()}</span>
                     )}
+                    <span className="duration-badge">{durationLabel}</span>
                   </div>
                   <div className="public-info">
                     <div className="public-text">
                       <p className="public-name" title={filename}>{filename}</p>
+                      <div className="public-owner-line">
+                        {channel?.logoUrl ? (
+                          <img className="channel-avatar small" src={channel.logoUrl} alt={channel.name || 'Channel'} />
+                        ) : (
+                          <span className="channel-avatar channel-avatar-fallback small">
+                            {(channel?.name || 'C').charAt(0).toUpperCase()}
+                          </span>
+                        )}
+                        <span>{channel?.name || 'Channel'}</span>
+                      </div>
                       {item.description && <p className="public-description">{item.description}</p>}
                     </div>
                     <a href={item.url} target="_blank" rel="noreferrer" className="public-open-link">

@@ -181,6 +181,11 @@ function Dashboard() {
   const renderFile = (item, index) => {
     const extension = item.url.split('.').pop().toLowerCase();
     const filename = getFilename(item.url);
+    const videoExts = ['mp4', 'mkv', 'webm', 'mov', 'avi', 'mpeg', 'mpg'];
+    const audioExts = ['mp3', 'wav', 'aac', 'ogg', 'm4a'];
+    const durationLabel = (videoExts.includes(extension) || audioExts.includes(extension)) ? '00:00' : 'N/A';
+    const ownerName = myChannel?.name || 'You';
+    const ownerLogo = myChannel?.logoUrl;
 
     const getIcon = () => {
       if (['jpg', 'jpeg', 'png', 'gif'].includes(extension)) return 'IMG';
@@ -199,10 +204,21 @@ function Dashboard() {
           ) : (
             <div className="file-icon">{getIcon()}</div>
           )}
+          <span className="duration-badge">{durationLabel}</span>
         </div>
 
         <div className="file-info">
           <p className="file-name" title={filename}>{filename}</p>
+          <div className="file-owner">
+            {ownerLogo ? (
+              <img className="owner-avatar" src={ownerLogo} alt={ownerName} />
+            ) : (
+              <span className="owner-avatar fallback">
+                {ownerName.charAt(0).toUpperCase()}
+              </span>
+            )}
+            <span className="owner-name">{ownerName}</span>
+          </div>
           <p className="file-type">{extension.toUpperCase()}</p>
           <p className={`file-visibility ${item.visibility}`}>{item.visibility}</p>
           {item.category && <p className="file-category">{item.category}</p>}
