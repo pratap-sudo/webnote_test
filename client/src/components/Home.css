@@ -115,6 +115,17 @@
   padding: 20px;
   text-align: left;
   box-shadow: var(--shadow-soft);
+  position: relative;
+  overflow: hidden;
+}
+
+.feature-card::before {
+  content: '';
+  display: block;
+  height: 120px;
+  border-radius: 12px;
+  margin-bottom: 14px;
+  background: linear-gradient(135deg, rgba(14, 165, 165, 0.2), rgba(37, 99, 235, 0.25));
 }
 
 .feature-card h3 {
