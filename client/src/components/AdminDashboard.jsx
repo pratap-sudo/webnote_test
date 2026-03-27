@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import './AdminDashboard.css';
@@ -13,6 +13,11 @@ function AdminDashboard() {
     users: []
   });
   const [loading, setLoading] = useState(true);
+  const [lastUpdated, setLastUpdated] = useState(null);
+  const [query, setQuery] = useState('');
+  const [roleFilter, setRoleFilter] = useState('all');
+  const [sortKey, setSortKey] = useState('createdAt');
+  const [sortDir, setSortDir] = useState('desc');
   const navigate = useNavigate();
   const token = localStorage.getItem('adminToken');
 
@@ -23,6 +28,7 @@ function AdminDashboard() {
         headers: { Authorization: `Bearer ${token}` },
       });
       setStats(res.data);
+      setLastUpdated(new Date());
       setLoading(false);
     } catch (err) {
       alert('Error fetching stats');
@@ -69,6 +75,62 @@ function AdminDashboard() {
     fetchStats();
   }, []);
 
+  const filteredUsers = useMemo(() => {
+    const term = query.trim().toLowerCase();
+    let next = stats.users.filter((user) => {
+      const matchesQuery = !term
+        || String(user.name || '').toLowerCase().includes(term)
+        || String(user.email || '').toLowerCase().includes(term);
+
+      const matchesRole = roleFilter === 'all'
+        || (roleFilter === 'admin' && user.isAdmin)
+        || (roleFilter === 'user' && !user.isAdmin);
+
+      return matchesQuery && matchesRole;
+    });
+
+    const dir = sortDir === 'asc' ? 1 : -1;
+    next = [...next].sort((a, b) => {
+      if (sortKey === 'name') {
+        return dir * String(a.name || '').localeCompare(String(b.name || ''));
+      }
+      if (sortKey === 'fileCount') {
+        return dir * ((a.fileCount || 0) - (b.fileCount || 0));
+      }
+      const aDate = new Date(a.createdAt || 0).getTime();
+      const bDate = new Date(b.createdAt || 0).getTime();
+      return dir * (aDate - bDate);
+    });
+
+    return next;
+  }, [query, roleFilter, sortKey, sortDir, stats.users]);
+
+  const handleExportCsv = () => {
+    const rows = filteredUsers.map((user) => ({
+      name: user.name || '',
+      email: user.email || '',
+      role: user.isAdmin ? 'Admin' : 'User',
+      files: user.fileCount || 0,
+      joined: user.createdAt ? new Date(user.createdAt).toISOString() : '',
+    }));
+
+    const header = ['name', 'email', 'role', 'files', 'joined'];
+    const body = rows.map((row) =>
+      header.map((key) => `"${String(row[key]).replace(/"/g, '""')}"`).join(',')
+    );
+
+    const csv = [header.join(','), ...body].join('\n');
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `users-${Date.now()}.csv`;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    window.URL.revokeObjectURL(url);
+  };
+
   if (loading) return <div className="loading">Loading admin dashboard...</div>;
 
   return (
@@ -76,10 +138,21 @@ function AdminDashboard() {
       <Navbar />
       
       <div className="admin-header">
-        <h1>Admin Dashboard</h1>
-        <button onClick={handleLogout} className="logout-btn">
-          Logout
-        </button>
+        <div>
+          <p className="admin-eyebrow">Operations</p>
+          <h1>Admin Dashboard</h1>
+          <p className="admin-subtitle">
+            Monitor users, manage access, and keep the platform clean.
+          </p>
+        </div>
+        <div className="admin-header-actions">
+          <button onClick={fetchStats} className="refresh-btn">
+            Refresh
+          </button>
+          <button onClick={handleLogout} className="logout-btn">
+            Logout
+          </button>
+        </div>
       </div>
 
       <div className="stats-grid">
@@ -95,10 +168,64 @@ function AdminDashboard() {
           <h3>Total Files</h3>
           <p className="stat-number">{stats.totalFiles}</p>
         </div>
+        <div className="stat-card subtle">
+          <h3>Visible Users</h3>
+          <p className="stat-number">{filteredUsers.length}</p>
+          <p className="stat-caption">
+            {lastUpdated ? `Updated ${lastUpdated.toLocaleTimeString()}` : 'Not synced yet'}
+          </p>
+        </div>
       </div>
 
       <div className="users-section">
-        <h2>All Users</h2>
+        <div className="users-header">
+          <div>
+            <h2>All Users</h2>
+            <p className="users-subtitle">Search, filter, and manage access in one place.</p>
+          </div>
+          <div className="users-actions">
+            <button onClick={handleExportCsv} className="export-btn">
+              Export CSV
+            </button>
+          </div>
+        </div>
+
+        <div className="users-controls">
+          <div className="search-field">
+            <input
+              type="text"
+              placeholder="Search by name or email"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+            />
+          </div>
+          <div className="filter-group">
+            <label>
+              Role
+              <select value={roleFilter} onChange={(e) => setRoleFilter(e.target.value)}>
+                <option value="all">All</option>
+                <option value="admin">Admins</option>
+                <option value="user">Users</option>
+              </select>
+            </label>
+            <label>
+              Sort
+              <select value={sortKey} onChange={(e) => setSortKey(e.target.value)}>
+                <option value="createdAt">Joined Date</option>
+                <option value="name">Name</option>
+                <option value="fileCount">File Count</option>
+              </select>
+            </label>
+            <button
+              type="button"
+              className="sort-dir"
+              onClick={() => setSortDir((prev) => (prev === 'asc' ? 'desc' : 'asc'))}
+            >
+              {sortDir === 'asc' ? 'Asc' : 'Desc'}
+            </button>
+          </div>
+        </div>
+
         <table className="users-table">
           <thead>
             <tr>
@@ -111,7 +238,7 @@ function AdminDashboard() {
             </tr>
           </thead>
           <tbody>
-            {stats.users.map((user) => (
+            {filteredUsers.map((user) => (
               <tr key={user.id}>
                 <td>{user.name}</td>
                 <td>{user.email}</td>
@@ -140,7 +267,14 @@ function AdminDashboard() {
             ))}
           </tbody>
         </table>
-        {stats.users.length === 0 && <p>No users found.</p>}
+        {filteredUsers.length === 0 && (
+          <div className="empty-state">
+            <p>No users match your filters.</p>
+            <button className="reset-btn" onClick={() => { setQuery(''); setRoleFilter('all'); }}>
+              Reset Filters
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );
